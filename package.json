@@ -8,6 +8,7 @@
   "dependencies": {
     "inquirer": "^3.2.2",
     "json-crate": "^0.1.3",
+    "lodash": "^4.17.4",
     "shelljs": "^0.7.8"
   },
   "devDependencies": {

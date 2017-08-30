@@ -1,29 +1,36 @@
 const { find, exec } = require('shelljs')
-const { writeAt } = require('json-crate')
+const { writeAt, loadAt } = require('json-crate')
+const { uniq } = require('lodash')
 
-const usingYarn = find('./yarn.lock')[0].includes('yarn.lock')
-const packageManager = usingYarn ? 'yarn' : 'npm'
+function installDependencies() {
+  const usingYarn = find('./yarn.lock')[0].includes('yarn.lock')
+  const packageManager = usingYarn ? 'yarn' : 'npm'
+  const prefix = usingYarn ? 'yarn add' : 'npm install'
 
-const yarnPrefix = 'yarn add --dev'
-const npmPrefix = 'npm install --dev'
+  console.log('Installing prettier')
+  exec(`${prefix} --dev prettier`)
 
-const installPrefix = usingYarn ? yarnPrefix : npmPrefix
+  console.log('Installing lint-staged')
+  exec(`${prefix} --dev lint-staged`)
 
-// TODO: check for packages?
+  console.log('Installing husky')
+  exec(`${prefix} --dev husky`)
+}
 
-console.log('Installing prettier')
-exec(`${installPrefix} prettier`)
+function setupCommitHook() {
+  const prettierConfig = 'prettier --write --single-quote --no-semi'
+  const path = ['lint-staged', '*.js']
+  const lintConfig = loadAt('./package.json', path).catch(() => [])
 
-console.log('Installing lint-staged')
-exec(`${installPrefix} lint-staged`)
+  return lintConfig
+    .then(config => {
+      const stageConfig = uniq([...config, prettierConfig, 'git add'])
+      return writeAt('./package.json', path, stageConfig)
+    })
+    .then(() => {
+      return writeAt('./package.json', 'scripts.precommit', 'lint-staged')
+    })
+}
 
-console.log('Installing husky')
-exec(`${installPrefix} husky`)
-
-const lintStageConfig = writeAt('./package.json', 'lint-staged', {
-  '*.js': ['prettier --write --single-quote --no-semi', 'git add']
-})
-
-lintStageConfig.then(() => {
-  writeAt('./package.json', 'scripts.precommit', 'lint-staged')
-})
+installDependencies()
+setupCommitHook()
