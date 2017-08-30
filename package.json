@@ -1,6 +1,6 @@
 {
   "name": "prettifier",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Setup prettier and commit hooks automatically",
   "main": "index.js",
   "author": "Netto Farah",
