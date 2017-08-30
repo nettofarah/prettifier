@@ -2,10 +2,12 @@ const { find, exec } = require('shelljs')
 const { writeAt, loadAt } = require('json-crate')
 const { uniq } = require('lodash')
 
+function usingYarn() {
+  return find('./yarn.lock')[0].includes('yarn.lock')
+}
+
 function installDependencies() {
-  const usingYarn = find('./yarn.lock')[0].includes('yarn.lock')
-  const packageManager = usingYarn ? 'yarn' : 'npm'
-  const prefix = usingYarn ? 'yarn add' : 'npm install'
+  const prefix = usingYarn() ? 'yarn add' : 'npm install'
 
   console.log('Installing prettier')
   exec(`${prefix} --dev prettier`)
