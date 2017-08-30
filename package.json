@@ -7,7 +7,9 @@
   "license": "MIT",
   "dependencies": {
     "fs-promise": "^2.0.3",
+    "has-yarn": "^1.0.0",
     "inquirer": "^3.2.2",
+    "listr": "^0.12.0",
     "lodash": "^4.17.4",
     "package-json-validator": "^0.6.2",
     "shelljs": "^0.7.8"

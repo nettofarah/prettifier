@@ -1,27 +1,19 @@
 const { find, exec } = require('shelljs')
 const { uniq, get, set, clone } = require('lodash')
 const fs = require('fs-promise')
+const hasYarn = require('has-yarn')
 const validator = require('package-json-validator').PJV
+const Listr = require('listr')
 
 function loadPackageJSON() {
   return fs.readJSON('./package.json')
 }
 
-function usingYarn() {
-  return find('./yarn.lock')[0].includes('yarn.lock')
-}
-
-function installDependencies() {
-  const prefix = usingYarn() ? 'yarn add' : 'npm install'
-
-  console.log('Installing prettier')
-  exec(`${prefix} --dev prettier`)
-
-  console.log('Installing lint-staged')
-  exec(`${prefix} --dev lint-staged`)
-
-  console.log('Installing husky')
-  exec(`${prefix} --dev husky`)
+function installDep(name) {
+  const prefix = hasYarn() ? 'yarn add' : 'npm install'
+  return new Promise(resolve => {
+    exec(`${prefix} --dev ${name}`, { silent: true }, resolve)
+  })
 }
 
 function setupCommitHook(originalPkg) {
@@ -46,14 +38,59 @@ function updatePackage(newPackage) {
   return fs.writeJson('./package.json', newPackage)
 }
 
-installDependencies()
-loadPackageJSON().then(pkg => {
-  const newPkg = setupCommitHook(pkg)
-  const validation = validateConfig(newPkg)
+const tasks = new Listr([
+  {
+    title: 'Installing Dependencies',
+    task: () => {
+      return new Listr([
+        {
+          title: 'prettier',
+          task: () => installDep('prettier')
+        },
 
-  if (validation.valid) {
-    return updatePackage(newPkg)
-  } else {
-    return Promise.reject('Invalid package.json configuration', validation)
+        {
+          title: 'husky',
+          task: () => installDep('husky')
+        },
+
+        {
+          title: 'lint-staged',
+          task: () => installDep('lint-staged')
+        }
+      ])
+    }
+  },
+  {
+    title: 'Setting Up commit hook',
+    task: ctx => {
+      return loadPackageJSON().then(pkg => (ctx.pkg = pkg))
+    }
+  },
+  {
+    title: 'Adding rules',
+    task: ctx => {
+      const newPkg = setupCommitHook(ctx.pkg)
+      ctx.pkg = newPkg
+    }
+  },
+
+  {
+    title: 'Validating package.json',
+    task: (ctx, task) => {
+      const validation = validateConfig(ctx.pkg)
+      if (!validation.valid) {
+        return Promise.reject('Invalid package.json configuration', validation)
+      }
+    }
+  },
+  {
+    title: 'Updating package.json',
+    task: ctx => {
+      return updatePackage(ctx.pkg)
+    }
   }
+])
+
+tasks.run().catch(err => {
+  console.error(err)
 })
