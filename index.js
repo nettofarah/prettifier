@@ -12,10 +12,11 @@ function loadPackageJSON() {
 
 function installDep(packageManager, name) {
   const { exec } = require('shelljs')
-  const prefix = packageManager === 'yarn' ? 'yarn add' : 'npm install'
+  const prefix =
+    packageManager === 'yarn' ? 'yarn add --dev' : 'npm install --save-dev'
 
   return new Promise((resolve, reject) => {
-    exec(`${prefix} --dev ${name}`, { silent: true }, function(code, out, err) {
+    exec(`${prefix} ${name}`, { silent: true }, function(code, out, err) {
       if (err) {
         reject()
       } else {
