@@ -20,5 +20,8 @@
       "prettier --write --single-quote --no-semi",
       "git add"
     ]
+  },
+  "scripts": {
+    "precommit": "lint-staged"
   }
 }
