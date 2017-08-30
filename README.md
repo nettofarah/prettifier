@@ -12,10 +12,10 @@ Prettifier will get you setup with prettier in no sweat.
 
 In order to do that this generator will:
 
-### Install Prettier
+### Installs Prettier
 - [prettier](https://github.com/prettier/prettier) - Prettier
 
-### Setup a commit hook with husky and lint-staged
+### Sets up a commit hook with husky and lint-staged
 So you can make sure all code gets run through prettier before a change is commited.
 
 - [husky](https://github.com/typicode/husky) - Git hooks made easy
