@@ -22,7 +22,8 @@
   "lint-staged": {
     "*.js": [
       "prettier --write --single-quote --no-semi",
-      "git add"
+      "git add",
+      "prettier --write"
     ]
   },
   "scripts": {
