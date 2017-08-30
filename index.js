@@ -1,6 +1,11 @@
 const { find, exec } = require('shelljs')
-const { writeAt, loadAt } = require('json-crate')
-const { uniq } = require('lodash')
+const { uniq, get, set, clone } = require('lodash')
+const fs = require('fs-promise')
+const validator = require('package-json-validator').PJV
+
+function loadPackageJSON() {
+  return fs.readJSON('./package.json')
+}
 
 function usingYarn() {
   return find('./yarn.lock')[0].includes('yarn.lock')
@@ -19,20 +24,36 @@ function installDependencies() {
   exec(`${prefix} --dev husky`)
 }
 
-function setupCommitHook() {
+function setupCommitHook(originalPkg) {
+  let pkg = clone(originalPkg)
+
   const prettierConfig = 'prettier --write --single-quote --no-semi'
   const path = ['lint-staged', '*.js']
-  const lintConfig = loadAt('./package.json', path).catch(() => [])
+  const config = get(pkg, path)
 
-  return lintConfig
-    .then(config => {
-      const stageConfig = uniq([...config, prettierConfig, 'git add'])
-      return writeAt('./package.json', path, stageConfig)
-    })
-    .then(() => {
-      return writeAt('./package.json', 'scripts.precommit', 'lint-staged')
-    })
+  const stageConfig = uniq([...config, prettierConfig, 'git add'])
+  set(pkg, path, stageConfig)
+  set(pkg, 'scripts.precommit', 'lint-staged')
+
+  return pkg
+}
+
+function validateConfig(pkg) {
+  return validator.validate(JSON.stringify(pkg), 'npm')
+}
+
+function updatePackage(newPackage) {
+  return fs.writeJson('./package.json', newPackage)
 }
 
 installDependencies()
-setupCommitHook()
+loadPackageJSON().then(pkg => {
+  const newPkg = setupCommitHook(pkg)
+  const validation = validateConfig(newPkg)
+
+  if (validation.valid) {
+    return updatePackage(newPkg)
+  } else {
+    return Promise.reject('Invalid package.json configuration', validation)
+  }
+})
