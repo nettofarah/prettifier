@@ -5,6 +5,12 @@
   "main": "index.js",
   "author": "Netto Farah",
   "license": "MIT",
+  "homepage": "http://github.com/nettofarah/prettifier",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nettofarah/prettifier.git"
+  },
+  "keywords": ["prettier", "lint-staged", "husky", "prettier config"],
   "dependencies": {
     "chalk": "^2.1.0",
     "fs-promise": "^2.0.3",
