@@ -6,6 +6,7 @@
   "author": "Netto Farah",
   "license": "MIT",
   "dependencies": {
+    "chalk": "^2.1.0",
     "fs-promise": "^2.0.3",
     "has-yarn": "^1.0.0",
     "inquirer": "^3.2.2",

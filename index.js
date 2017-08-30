@@ -4,6 +4,7 @@ const hasYarn = require('has-yarn')
 const validator = require('package-json-validator').PJV
 const Listr = require('listr')
 const inquirer = require('inquirer')
+const chalk = require('chalk')
 
 function loadPackageJSON() {
   return fs.readJSON('./package.json')
@@ -137,10 +138,13 @@ semi: false
   }
 ]
 
+console.log(
+  `Hi 👋 ! ${chalk.dim("Let's make your code")} ${chalk.bold('prettier')}!`
+)
 inquirer
   .prompt(questions)
   .then(anwsers => {
     return tasks.run(anwsers)
   })
-  .then(() => console.log(`You're all set up! 🎉`))
+  .then(() => console.log(`You're all set!  💅🏻`))
   .catch(err => console.error(err))
