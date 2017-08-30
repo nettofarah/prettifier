@@ -5,6 +5,7 @@ Get started with prettier with just one command.
 $ npm install -g prettifier
 $ prettifier
 ```
+![Screenshot](https://raw.githubusercontent.com/nettofarah/prettifier/master/screenshot.gif)
 
 ## What does prettifier do?
 It is simple.
