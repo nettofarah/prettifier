@@ -32,7 +32,7 @@ function setupCommitHook(originalPkg) {
   const path = ['lint-staged', '*.js']
   const config = get(pkg, path)
 
-  const stageConfig = uniq([...config, 'prettier --write', 'git add'])
+  const stageConfig = uniq(config.concat(['prettier --write', 'git add']))
   set(pkg, path, stageConfig)
   set(pkg, 'scripts.precommit', 'lint-staged')
 
