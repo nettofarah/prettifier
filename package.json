@@ -1,5 +1,5 @@
 {
-  "name": "@nettofarah/prettifier",
+  "name": "prettifier",
   "version": "0.2.0",
   "description": "Setup prettier and commit hooks automatically",
   "main": "index.js",
@@ -10,12 +10,7 @@
     "type": "git",
     "url": "https://github.com/nettofarah/prettifier.git"
   },
-  "keywords": [
-    "prettier",
-    "lint-staged",
-    "husky",
-    "prettier config"
-  ],
+  "keywords": ["prettier", "lint-staged", "husky", "prettier config"],
   "dependencies": {
     "chalk": "^2.1.0",
     "fs-promise": "^2.0.3",

@@ -2,7 +2,7 @@
 Get started with prettier with just one command.
 
 ```bash
-$ npm install -g @nettofarah/prettifier
+$ npm install -g prettifier
 $ prettifier
 ```
 
