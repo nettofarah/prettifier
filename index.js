@@ -138,13 +138,15 @@ semi: false
   }
 ]
 
-console.log(
-  `Hi 👋 ! ${chalk.dim("Let's make your code")} ${chalk.bold('prettier')}!`
-)
-inquirer
-  .prompt(questions)
-  .then(anwsers => {
-    return tasks.run(anwsers)
-  })
-  .then(() => console.log(`You're all set!  💅🏻`))
-  .catch(err => console.error(err))
+module.exports = function run() {
+  console.log(
+    `Hi 👋 ! ${chalk.dim("Let's make your code")} ${chalk.bold('prettier')}!`
+  )
+  return inquirer
+    .prompt(questions)
+    .then(anwsers => {
+      return tasks.run(anwsers)
+    })
+    .then(() => console.log(`You're all set!  💅🏻`))
+    .catch(err => console.error(err))
+}

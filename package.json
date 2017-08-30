@@ -29,5 +29,8 @@
   },
   "scripts": {
     "precommit": "lint-staged"
+  },
+  "bin": {
+    "prettifier": "./bin/prettifier.js"
   }
 }
