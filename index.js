@@ -17,11 +17,7 @@ function installDep(packageManager, name) {
 
   return new Promise((resolve, reject) => {
     exec(`${prefix} ${name}`, { silent: true }, function(code, out, err) {
-      if (err) {
-        reject()
-      } else {
-        resolve()
-      }
+      resolve()
     })
   })
 }
@@ -91,7 +87,7 @@ const tasks = new Listr([
     task: (ctx, task) => {
       const validation = validateConfig(ctx.pkg)
       if (!validation.valid) {
-        return Promise.reject('Invalid package.json configuration', validation)
+        throw new Error(`Invalid package.json configuration: ${validation}`)
       }
     }
   },
