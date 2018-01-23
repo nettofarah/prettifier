@@ -127,7 +127,7 @@ const questions = [
     default: `# .prettierrc
 # Use this file to define your defaults for prettier
 # For a list of all available options:
-# https://github.com/prettier/prettier#basic-configuration
+# https://prettier.io/docs/en/options.html
 printWidth: 80
 singleQuote: true
 semi: false
