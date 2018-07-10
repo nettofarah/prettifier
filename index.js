@@ -5,21 +5,16 @@ const validator = require('package-json-validator').PJV
 const Listr = require('listr')
 const inquirer = require('inquirer')
 const chalk = require('chalk')
+const execa = require('execa')
 
 function loadPackageJSON() {
   return fs.readJSON('./package.json')
 }
 
 function installDep(packageManager, name) {
-  const { exec } = require('shelljs')
-  const prefix =
-    packageManager === 'yarn' ? 'yarn add --dev' : 'npm install --save-dev'
-
-  return new Promise((resolve, reject) => {
-    exec(`${prefix} ${name}`, { silent: true }, function(code, out, err) {
-      resolve()
-    })
-  })
+  const args =
+    packageManager === 'yarn' ? ['add', '--dev'] : ['install', '--save-dev']
+  return execa(packageManager, args.concat(name), { stdio: 'ignore' })
 }
 
 function setupCommitHook(originalPkg) {
@@ -31,6 +26,7 @@ function setupCommitHook(originalPkg) {
   const stageConfig = uniq(config.concat(['prettier --write', 'git add']))
   set(pkg, path, stageConfig)
   set(pkg, 'scripts.precommit', 'lint-staged')
+  set(pkg, 'scripts.fmt', "prettier --write './**/*.js'")
 
   return pkg
 }
@@ -102,6 +98,13 @@ const tasks = new Listr([
     task: ctx => {
       return createPrettierConf(ctx.prettierConf)
     }
+  },
+  {
+    title: 'Formatting your code',
+    skip: ctx => !ctx.format,
+    task: ctx => {
+      return execa(ctx.packageManager, ['run', 'fmt'], { stdio: 'ignore' })
+    }
   }
 ])
 
@@ -132,6 +135,12 @@ printWidth: 80
 singleQuote: true
 semi: false
 `
+  },
+  {
+    type: 'confirm',
+    name: 'format',
+    message: 'Format code after setup',
+    default: true
   }
 ]
 
